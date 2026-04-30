@@ -8,6 +8,8 @@ const validate = (req, res, next) => {
             errors: errors.array()
         })
     }
+
+    next();
 }
 
 export const validateRegistration = [
@@ -17,7 +19,14 @@ export const validateRegistration = [
         .withMessage("Contact is required")
         .matches(/^\d{10}$/).withMessage("Contact must be a valid 10 digit number"),
     body("password").notEmpty().withMessage("Password is required"),
-    body("fullName").notEmpty().withMessage("Full name is required").isLengths({min: 3}).withMessage("Full name must be at least 3 characters long"),
+    body("fullName").notEmpty().withMessage("Full name is required").isLength({ min: 3 }).withMessage("Full name must be at least 3 characters long"),
     body("isSeller").isBoolean().withMessage("Is seller must be a boolean"),
+    validate
+];
+
+
+export const validateLogin = [
+    body("email").isEmail().withMessage("Invalid email format"),
+    body("password").notEmpty().withMessage("Password is required"),
     validate
 ];

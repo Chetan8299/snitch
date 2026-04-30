@@ -1,13 +1,18 @@
 import axios from "axios";
 
 const authApiInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL + "/auth",
+    baseURL: "/api/auth",
     withCredentials: true,
 })
 
-export async function register({ email, contact, password, fullname, isSeller }) {
-    const response = await authApiInstance.post("/register", { email, contact, password, fullname, isSeller });
+export async function register({ email, contact, password, fullName, isSeller }) {
+    const response = await authApiInstance.post("/register", { email, contact, password, fullName, isSeller });
 
     return response.data;
+}
 
+export async function login({ email, password }) {
+    const response = await authApiInstance.post("/login", { email, password });
+
+    return response.data;
 }

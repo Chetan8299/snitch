@@ -1,4 +1,6 @@
-import userModel from "../models/user.model";
+import userModel from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+import { env } from "../config/env.js";
 
 async function sendTokenResponse(user, res, message) {
     const token = jwt.sign({
@@ -23,32 +25,71 @@ async function sendTokenResponse(user, res, message) {
 }
 
 export const register = async (req, res) => {
-    try {
-        const { email, contact, password, fullName, isSeller } = req.body;
+    const { email, contact, password, fullName, isSeller } = req.body;
 
-        const existingUser = await userModel.findOne({
-            $or: [
-                { email },
-                { contact }
-            ]
-        })
+    const existingUser = await userModel.findOne({
+        $or: [
+            { email },
+            { contact }
+        ]
+    })
 
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" })
-        }
+    if (existingUser) {
+        return res.status(400).json({ message: "User already exists" })
+    }
 
-        const user = await userModel.create({
+    const user = await userModel.create({
+        email,
+        contact,
+        password,
+        fullName,
+        role: isSeller ? "seller" : "buyer"
+    })
+
+    return await sendTokenResponse(user, res, "User created successfully")
+}
+
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+        return res.status(400).json({ message: "User not found" })
+    }
+
+    const isPasswordCorrect = await user.comparePassword(password);
+
+    if (!isPasswordCorrect) {
+        return res.status(400).json({ message: "Invalid password" })
+    }
+
+    return await sendTokenResponse(user, res, "Login successful")
+}
+
+export const googleCallback = async (req, res) => {
+    const { id, displayName, emails, photos } = req.user
+
+    const email = emails[0].value;
+    const profilePic = photos[0].value;
+
+    let user = await userModel.findOne({
+        email
+    })
+
+    if (!user) {
+        user = await userModel.create({
             email,
-            contact,
-            password,
-            fullName,
-            role: isSeller ? "seller" : "buyer"
-        })
+            googleId: id,
+            fullName: displayName,
 
-        return await sendTokenResponse(user, res, "User created successfully")
-    } catch (error) {
-        return res.status(500).json({
-            message: "Internal server error"
         })
     }
+
+    const token = jwt.sign({
+        id: user._id,
+    }, env.JWT_SECRET, { expiresIn: "7d" })
+
+    res.cookie("token", token)
+
+    res.redirect("http://localhost:5173/")
 }
