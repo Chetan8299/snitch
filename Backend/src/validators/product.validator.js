@@ -14,9 +14,9 @@ const validate = (req, res, next) => {
 
 
 export const createProductValidator = [
-    body("title").notEmpty().withMessage("Title is required"),
-    body("description").notEmpty().withMessage("Description is required"),
-    body("priceAmount").notEmpty().withMessage("Price amount is required"),
+    body("title").trim().notEmpty().withMessage("Title is required"),
+    body("description").trim().notEmpty().withMessage("Description is required"),
+    body("priceAmount").trim().notEmpty().withMessage("Price amount is required"),
     body("priceCurrency").optional().isIn(["USD", "INR", "EUR", "GBP", "AUD", "CAD", "CHF", "CNY", "JPY", "KRW", "MXN", "NZD", "RUB", "SAR", "SEK", "SGD", "THB", "TRY", "ZAR"]).withMessage("Invalid price currency"),
     validate
 ]

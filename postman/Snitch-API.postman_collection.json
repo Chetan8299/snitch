@@ -1,0 +1,170 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-snitch-api",
+    "name": "Snitch API",
+    "description": "All HTTP routes for the Snitch backend.\n\n**Auth:** Register and Login set a `token` cookie (`httpOnly` from server). In Postman, keep **Send cookies** enabled and run **Login (seller)** before product routes.\n\n**Products:** Require a JWT cookie and `role: seller`.\n\n**Google OAuth:** Best tested in a browser; the callback issues a cookie and redirects to the frontend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Root — server up",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/",
+            "description": "Public. Returns a short JSON payload when the API process is running."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (buyer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"buyer@example.com\",\n  \"contact\": \"9876543210\",\n  \"password\": \"password123\",\n  \"fullName\": \"Test Buyer\",\n  \"isSeller\": false\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register",
+            "description": "Creates user with role `buyer`. Sets `token` cookie on success."
+          },
+          "response": []
+        },
+        {
+          "name": "Register (seller)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seller@example.com\",\n  \"contact\": \"9123456789\",\n  \"password\": \"password123\",\n  \"fullName\": \"Test Seller\",\n  \"isSeller\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register",
+            "description": "Creates user with role `seller`. Use this account before **Products** requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"seller@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login",
+            "description": "Sets `token` cookie on success. Adjust email/password to match a registered user."
+          },
+          "response": []
+        },
+        {
+          "name": "Google OAuth — start",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/google",
+            "description": "Redirects to Google consent. In Postman you may see a 302 chain; complete login in a browser for a realistic flow."
+          },
+          "response": []
+        },
+        {
+          "name": "Google OAuth — callback",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/auth/google/callback",
+            "description": "Called by Google after consent (includes `code` query params). Not useful as a standalone Postman request; use the browser OAuth flow."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "description": "Requires `token` cookie and seller role. Run **Register (seller)** or **Login** with a seller account first.",
+      "item": [
+        {
+          "name": "Create product",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Sample product",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Short description for Postman.",
+                  "type": "text"
+                },
+                {
+                  "key": "priceAmount",
+                  "value": "999",
+                  "type": "text"
+                },
+                {
+                  "key": "priceCurrency",
+                  "value": "INR",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": [],
+                  "description": "Attach 1–7 image files (field name must be `images`)."
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/api/products/",
+            "description": "Multipart form: `title`, `description`, `priceAmount`, `priceCurrency` (optional in API; validator allows optional currency with allowed codes), `images` files.\n\nAllowed currencies (if sent): USD, INR, EUR, GBP, AUD, CAD, CHF, CNY, JPY, KRW, MXN, NZD, RUB, SAR, SEK, SGD, THB, TRY, ZAR."
+          },
+          "response": []
+        },
+        {
+          "name": "List my products (seller)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/products/seller",
+            "description": "Returns products where `seller` is the authenticated user."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

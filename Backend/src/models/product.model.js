@@ -19,10 +19,14 @@ const productSchema = new Schema({
             default: "INR"
         }
     },
-    images: {
+    images: [{
         url: {
             type: String,
             required: true
         },
-    }
+    }]
 })
+
+const productModel = model("product", productSchema);
+
+export default productModel;
