@@ -14,6 +14,28 @@ function authJson(req, res, status, body) {
     return res.status(status).json(body);
 }
 
+export const authenticateUser = async (req, res, next) => {
+    const token = req.cookies.token;
+    if (!token) {
+        return authJson(req, res, 401, { message: "Unauthorized" });
+    }
+    try {
+        const decoded = jwt.verify(token, env.JWT_SECRET);
+
+        const user = await userModel.findById(decoded.id);
+        if (!user) {
+            return authJson(req, res, 401, { message: "Unauthorized" });
+        }
+
+        req.user = user;
+        next();
+    } catch (err) {
+        console.error(err);
+        return authJson(req, res, 401, { message: "Unauthorized" });
+    }
+}
+
+
 export const authenticateSeller = async (req, res, next) => {
     const token = req.cookies.token;
 

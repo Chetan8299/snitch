@@ -7,9 +7,11 @@ import {
   register,
   login,
   googleCallback,
+  getMe,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
 import { env } from "../config/env.js";
+import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const authRouter = Router();
 
@@ -30,4 +32,7 @@ authRouter.get(
   }),
   googleCallback,
 );
+
+authRouter.get("/me", authenticateUser, getMe);
+
 export default authRouter;

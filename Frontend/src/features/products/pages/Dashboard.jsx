@@ -2,6 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
+import {
+  cardClass,
+  cardStyle,
+  colors,
+  errorStyle,
+  headingClass,
+  headingStyle,
+  linkClass,
+  mutedTextStyle,
+  overlineStyle,
+  pageStyle,
+  primaryBtnClass,
+  primaryBtnStyle,
+  productCardStyle,
+} from "../../../app/uiTheme";
 
 function firstImageUrl(product) {
   const first = product?.images?.[0];
@@ -63,39 +78,24 @@ const Dashboard = () => {
   return (
     <div
       className="min-h-screen w-full flex justify-center px-4 sm:px-8 lg:px-12 pt-4 pb-10 sm:pt-6 sm:pb-12"
-      style={{ backgroundColor: "#131315", fontFamily: "'Inter', sans-serif" }}
+      style={pageStyle}
     >
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap"
-        rel="stylesheet"
-      />
-
       <div className="w-full max-w-[min(100%,1200px)]">
         <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div>
             <p
               className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-2"
-              style={{ color: "#F59E0B" }}
+              style={overlineStyle}
             >
               Seller
             </p>
             <h1
-              className="text-3xl sm:text-4xl font-bold tracking-tight"
-              style={{
-                fontFamily: "'Manrope', sans-serif",
-                color: "#E5E1E4",
-                letterSpacing: "-0.02em",
-              }}
+              className={`text-3xl sm:text-4xl font-bold ${headingClass}`}
+              style={headingStyle}
             >
               Your products
             </h1>
-            <p className="text-sm sm:text-base mt-3 max-w-xl" style={{ color: "#D8C3AD" }}>
+            <p className="text-sm sm:text-base mt-3 max-w-xl" style={mutedTextStyle}>
               {loading
                 ? "Loading your listings…"
                 : `${sellerProducts.length} listing${sellerProducts.length === 1 ? "" : "s"}`}
@@ -104,18 +104,14 @@ const Dashboard = () => {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/seller/create-product"
-              className="inline-flex items-center justify-center rounded-none px-6 py-3.5 text-sm font-semibold tracking-wide transition focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/40 focus:ring-offset-2 focus:ring-offset-[#131315]"
-              style={{
-                background: "linear-gradient(135deg, #FFC174 0%, #F59E0B 100%)",
-                color: "#2a1700",
-                boxShadow: "0 4px 24px rgba(245,158,11,0.18)",
-              }}
+              className={`inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold tracking-wide ${primaryBtnClass}`}
+              style={primaryBtnStyle}
             >
               New product
             </Link>
             <Link
               to="/"
-              className="text-sm font-semibold text-[#F59E0B] transition hover:text-[#FFC174]"
+              className={linkClass}
             >
               Home
             </Link>
@@ -124,12 +120,8 @@ const Dashboard = () => {
 
         {error ? (
           <div
-            className="rounded-none px-5 py-4 text-sm mb-6"
-            style={{
-              backgroundColor: "rgba(147,0,10,0.25)",
-              border: "1px solid rgba(255,180,171,0.15)",
-              color: "#FFAAA5",
-            }}
+            className={`${cardClass} px-5 py-4 text-sm mb-6`}
+            style={errorStyle}
             role="alert"
           >
             {error}
@@ -138,29 +130,26 @@ const Dashboard = () => {
 
         {loading ? (
           <div
-            className="rounded-none border border-[#534434]/40 p-12 sm:p-16 text-center text-sm"
-            style={{ backgroundColor: "#1C1B1D", color: "#D8C3AD" }}
+            className={`${cardClass} p-12 sm:p-16 text-center text-sm`}
+            style={{ ...cardStyle, color: colors.muted }}
           >
             Loading…
           </div>
         ) : !sellerProducts.length ? (
           <div
-            className="rounded-none border border-[#534434]/40 p-10 sm:p-14 text-center space-y-6"
-            style={{ backgroundColor: "#1C1B1D" }}
+            className={`${cardClass} p-10 sm:p-14 text-center space-y-6`}
+            style={cardStyle}
           >
-            <p className="text-lg font-medium" style={{ color: "#E5E1E4" }}>
+            <p className="text-lg font-medium" style={{ color: colors.text }}>
               No products yet
             </p>
-            <p className="text-sm max-w-md mx-auto" style={{ color: "#D8C3AD" }}>
+            <p className="text-sm max-w-md mx-auto" style={mutedTextStyle}>
               Create your first listing to show it here.
             </p>
             <Link
               to="/seller/create-product"
-              className="inline-flex items-center justify-center rounded-none px-6 py-3.5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/40"
-              style={{
-                background: "linear-gradient(135deg, #FFC174 0%, #F59E0B 100%)",
-                color: "#2a1700",
-              }}
+              className={`inline-flex items-center justify-center px-6 py-3.5 text-sm font-semibold ${primaryBtnClass}`}
+              style={primaryBtnStyle}
             >
               Create product
             </Link>
@@ -173,13 +162,10 @@ const Dashboard = () => {
               return (
                 <li key={id ?? product.title}>
                   <article
-                    className="h-full flex flex-col rounded-none overflow-hidden border transition hover:border-[#F59E0B]/35"
-                    style={{
-                      backgroundColor: "#1C1B1D",
-                      borderColor: "rgba(83, 68, 52, 0.45)",
-                    }}
+                    className="h-full flex flex-col rounded-none overflow-hidden border border-zinc-300 transition hover:border-amber-600/50"
+                    style={productCardStyle}
                   >
-                    <div className="aspect-4/3 bg-[#131315] relative">
+                    <div className="aspect-4/3 relative" style={{ backgroundColor: colors.image }}>
                       {img ? (
                         <img
                           src={img}
@@ -188,8 +174,7 @@ const Dashboard = () => {
                         />
                       ) : (
                         <div
-                          className="absolute inset-0 flex items-center justify-center text-xs"
-                          style={{ color: "#534434" }}
+                          className="absolute inset-0 flex items-center justify-center text-xs text-zinc-400"
                         >
                           No image
                         </div>
@@ -197,20 +182,17 @@ const Dashboard = () => {
                     </div>
                     <div className="p-5 sm:p-6 flex flex-col flex-1 gap-3 min-w-0">
                       <h2
-                        className="text-base font-semibold leading-snug line-clamp-2"
-                        style={{
-                          fontFamily: "'Manrope', sans-serif",
-                          color: "#E5E1E4",
-                        }}
+                        className={`text-base font-semibold leading-snug line-clamp-2 ${headingClass}`}
+                        style={headingStyle}
                       >
                         {product.title}
                       </h2>
-                      <p className="text-lg font-semibold" style={{ color: "#F59E0B" }}>
+                      <p className="text-lg font-semibold text-amber-700">
                         {formatPrice(product.price?.amount, product.price?.currency)}
                       </p>
                       <p
                         className="text-sm leading-relaxed line-clamp-3 flex-1"
-                        style={{ color: "#D8C3AD" }}
+                        style={mutedTextStyle}
                       >
                         {product.description}
                       </p>

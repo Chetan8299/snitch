@@ -1,6 +1,6 @@
 import { setError, setLoading, setUser } from "../state/auth.slice";
 import { useDispatch } from "react-redux";
-import { login, register } from "../service/auth.api";
+import { getMe, login, register } from "../service/auth.api";
 
 export const useAuth = () => {
     const dispatch = useDispatch();
@@ -38,8 +38,32 @@ export const useAuth = () => {
         }
     }
 
+    async function handleGetMe() {
+        try {
+            dispatch(setLoading(true));
+            dispatch(setError(null));
+            const response = await getMe();
+            dispatch(setUser(response.user));
+        } catch (error) {
+            const status = error.response?.status;
+            if (status === 401) {
+                dispatch(setUser(null));
+                return;
+            }
+            const message =
+                error.response?.data?.message ??
+                error.response?.data?.errors?.[0]?.msg ??
+                error.message;
+            dispatch(setError(typeof message === "string" ? message : "Could not verify session"));
+        } finally {
+            dispatch(setLoading(false));
+        }
+
+    }
+
     return {
         handleRegister,
-        handleLogin
-    }
-}
+        handleLogin,
+        handleGetMe
+    };
+};

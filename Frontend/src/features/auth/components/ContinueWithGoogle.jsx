@@ -4,7 +4,7 @@ const ContinueWithGoogle = () => {
   return (
     <div>
       <a
-        className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-[#dadce0] bg-white px-6 py-3.5 text-sm font-medium text-[#3c4043] shadow-sm transition-colors duration-200 hover:bg-[#f8f9fa] focus:outline-none focus:ring-2 focus:ring-[#1a73e8]/30 focus:ring-offset-2 focus:ring-offset-[#1C1B1D]"
+        className="inline-flex w-full items-center justify-center gap-3 rounded-none border border-zinc-300 bg-white px-6 py-3.5 text-sm font-medium text-zinc-700 shadow-sm transition-colors duration-200 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-amber-600/30 focus:ring-offset-2 focus:ring-offset-white"
         href="/api/auth/google"
       >
         <svg

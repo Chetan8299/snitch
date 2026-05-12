@@ -1,17 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { useProduct } from "../hooks/useProduct";
-
-const inputBase =
-  "w-full rounded-2xl border px-5 py-4 text-sm text-[#E5E1E4] " +
-  "bg-[#131315] placeholder:text-[#534434]/80 " +
-  "border-[#534434]/40 " +
-  "transition-all duration-200 outline-none " +
-  "focus:border-[#F59E0B]/60 focus:ring-2 focus:ring-[#F59E0B]/15 " +
-  "hover:border-[#534434]/70";
-
-const labelBase =
-  "block text-xs font-medium tracking-widest uppercase text-[#D8C3AD]/70 mb-2.5";
+import {
+  cardClass,
+  cardStyle,
+  colors,
+  errorStyle,
+  headingClass,
+  headingStyle,
+  inputBase,
+  labelBase,
+  linkClass,
+  mutedTextStyle,
+  overlineStyle,
+  outlineBtnClass,
+  pageStyle,
+  primaryBtnClass,
+  primaryBtnStyle,
+  successStyle,
+} from "../../../app/uiTheme";
 
 const CURRENCIES = [
   "INR",
@@ -40,11 +47,11 @@ const Field = ({ id, label, optional, children }) => (
     <label htmlFor={id} className={labelBase}>
       {label}{" "}
       {optional ? (
-        <span className="text-[#534434]/80 normal-case tracking-normal">
+        <span className="text-zinc-500 normal-case tracking-normal">
           (optional)
         </span>
       ) : (
-        <span className="text-[#F59E0B]">*</span>
+        <span className="text-amber-700">*</span>
       )}
     </label>
     {children}
@@ -77,7 +84,7 @@ function ImagePreviewGrid({ urls, files, onRemove }) {
               ? `${fileFingerprint(files[i])}-${i}`
               : `preview-${i}`
           }
-          className="relative group aspect-square rounded-2xl overflow-hidden border border-[#534434]/35 bg-[#131315] shadow-lg shadow-black/20"
+          className="relative group aspect-square rounded-none overflow-hidden border border-zinc-300 bg-zinc-100 shadow-sm"
         >
           <img
             src={url}
@@ -88,13 +95,13 @@ function ImagePreviewGrid({ urls, files, onRemove }) {
             className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent opacity-80 pointer-events-none"
             aria-hidden
           />
-          <p className="absolute bottom-0 left-0 right-0 px-2.5 pb-2 pt-6 text-[10px] text-[#E5E1E4]/90 truncate">
+          <p className="absolute bottom-0 left-0 right-0 px-2.5 pb-2 pt-6 text-[10px] text-zinc-800 truncate">
             {files[i]?.name ?? "Image"}
           </p>
           <button
             type="button"
             onClick={() => onRemove(i)}
-            className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-xl border border-white/10 bg-black/55 text-[#E5E1E4] text-lg leading-none backdrop-blur-sm opacity-90 hover:bg-red-950/80 hover:border-red-400/30 hover:text-red-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B]"
+            className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-none border border-zinc-300 bg-white/90 text-zinc-800 text-lg leading-none hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600"
             aria-label={`Remove image ${i + 1}`}
           >
             ×
@@ -192,38 +199,23 @@ const CreateProduct = () => {
   return (
     <div
       className="min-h-screen w-full flex justify-center px-4 sm:px-8 lg:px-12 py-12 sm:py-16 lg:py-20"
-      style={{ backgroundColor: "#131315", fontFamily: "'Inter', sans-serif" }}
+      style={pageStyle}
     >
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap"
-        rel="stylesheet"
-      />
-
       <div className="w-full max-w-[min(100%,1200px)]">
         <header className="mb-10 lg:mb-12 max-w-3xl">
           <p
             className="text-[10px] font-semibold tracking-[0.25em] uppercase mb-2"
-            style={{ color: "#F59E0B" }}
+            style={overlineStyle}
           >
             Seller
           </p>
           <h1
-            className="text-3xl sm:text-4xl font-bold tracking-tight"
-            style={{
-              fontFamily: "'Manrope', sans-serif",
-              color: "#E5E1E4",
-              letterSpacing: "-0.02em",
-            }}
+            className={`text-3xl sm:text-4xl font-bold ${headingClass}`}
+            style={headingStyle}
           >
             New product
           </h1>
-          <p className="text-sm sm:text-base mt-3 leading-relaxed" style={{ color: "#D8C3AD" }}>
+          <p className="text-sm sm:text-base mt-3 leading-relaxed" style={mutedTextStyle}>
             Fill in the details on the left; add images on the right. Previews update as you pick
             files (up to seven).
           </p>
@@ -231,8 +223,8 @@ const CreateProduct = () => {
 
         <form
           onSubmit={onSubmit}
-          className="rounded-3xl p-6 sm:p-8 lg:p-10 xl:p-12"
-          style={{ backgroundColor: "#1C1B1D" }}
+          className={`${cardClass} p-6 sm:p-8 lg:p-10 xl:p-12 shadow-sm`}
+          style={cardStyle}
           noValidate
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 xl:gap-14">
@@ -287,7 +279,7 @@ const CreateProduct = () => {
                     className={`${inputBase} appearance-none cursor-pointer`}
                   >
                     {CURRENCIES.map((c) => (
-                      <option key={c} value={c} className="bg-[#1C1B1D]">
+                      <option key={c} value={c} className="bg-white">
                         {c}
                       </option>
                     ))}
@@ -296,10 +288,10 @@ const CreateProduct = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-5 lg:border-l border-[#534434]/25 lg:pl-10 xl:pl-12 pt-2 lg:pt-0 space-y-4 min-w-0">
+            <div className="lg:col-span-5 lg:border-l border-zinc-300 lg:pl-10 xl:pl-12 pt-2 lg:pt-0 space-y-4 min-w-0">
               <Field id="images" label="Images">
                 <div
-                  className="rounded-2xl border-2 border-dashed border-[#534434]/50 bg-[#131315]/80 px-4 py-8 sm:py-10 text-center transition hover:border-[#F59E0B]/35"
+                  className="rounded-none border-2 border-dashed border-zinc-300 bg-zinc-50 px-4 py-8 sm:py-10 text-center transition hover:border-amber-600/40"
                   style={{ minHeight: "140px" }}
                 >
                   <input
@@ -309,14 +301,14 @@ const CreateProduct = () => {
                     accept="image/*"
                     multiple
                     onChange={onImagesChange}
-                    className="block w-full text-sm text-[#D8C3AD] file:mx-auto file:mr-0 file:mb-3 file:block file:rounded-xl file:border-0 file:bg-[#534434]/35 file:px-4 file:py-2.5 file:text-xs file:font-semibold file:text-[#E5E1E4] file:cursor-pointer cursor-pointer"
+                    className="block w-full text-sm text-zinc-600 file:mx-auto file:mr-0 file:mb-3 file:block file:rounded-none file:border file:border-zinc-300 file:bg-white file:px-4 file:py-2.5 file:text-xs file:font-semibold file:text-zinc-800 file:cursor-pointer cursor-pointer"
                   />
-                  <p className="text-xs leading-relaxed mt-2" style={{ color: "#D8C3AD" }}>
+                  <p className="text-xs leading-relaxed mt-2" style={mutedTextStyle}>
                     Up to 7 total (add in batches) · duplicate files skipped · 10 MB each · at least one
                     to submit
                   </p>
                   {imageFiles.length > 0 ? (
-                    <p className="text-xs font-medium mt-3 text-[#F59E0B]">
+                    <p className="text-xs font-medium mt-3 text-amber-700">
                       {imageFiles.length} selected
                     </p>
                   ) : null}
@@ -330,31 +322,15 @@ const CreateProduct = () => {
               />
             </div>
 
-            <div className="lg:col-span-12 space-y-6 pt-8 mt-2 border-t border-[#534434]/20">
+            <div className="lg:col-span-12 space-y-6 pt-8 mt-2 border-t border-zinc-300">
               {error ? (
-                <p
-                  className="rounded-2xl px-5 py-3 text-sm"
-                  style={{
-                    backgroundColor: "rgba(147,0,10,0.25)",
-                    border: "1px solid rgba(255,180,171,0.15)",
-                    color: "#FFAAA5",
-                  }}
-                  role="alert"
-                >
+                <p className="rounded-none px-5 py-3 text-sm" style={errorStyle} role="alert">
                   {error}
                 </p>
               ) : null}
 
               {success ? (
-                <p
-                  className="rounded-2xl px-5 py-3 text-sm"
-                  style={{
-                    backgroundColor: "rgba(34,120,60,0.2)",
-                    border: "1px solid rgba(134,239,172,0.2)",
-                    color: "#BBF7D0",
-                  }}
-                  role="status"
-                >
+                <p className="rounded-none px-5 py-3 text-sm" style={successStyle} role="status">
                   {success}
                 </p>
               ) : null}
@@ -363,26 +339,14 @@ const CreateProduct = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={
-                    "w-full sm:w-auto sm:min-w-[220px] rounded-2xl px-8 py-4 text-sm font-semibold tracking-wide " +
-                    "transition-all duration-200 " +
-                    "disabled:pointer-events-none disabled:opacity-40 " +
-                    "focus:outline-none focus:ring-2 focus:ring-[#F59E0B]/40 focus:ring-offset-2 " +
-                    "focus:ring-offset-[#1C1B1D]"
-                  }
-                  style={{
-                    background: loading
-                      ? "#F59E0B"
-                      : "linear-gradient(135deg, #FFC174 0%, #F59E0B 100%)",
-                    color: "#2a1700",
-                    boxShadow: "0 4px 24px rgba(245,158,11,0.18)",
-                  }}
+                  className={`w-full sm:w-auto sm:min-w-[220px] px-8 ${primaryBtnClass}`}
+                  style={primaryBtnStyle}
                 >
                   {loading ? "Creating…" : "Create product"}
                 </button>
                 <Link
                   to="/"
-                  className="text-center sm:text-left text-sm font-semibold text-[#F59E0B] transition hover:text-[#FFC174]"
+                  className={`text-center sm:text-left text-sm ${linkClass}`}
                 >
                   Back to home
                 </Link>

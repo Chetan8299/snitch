@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { createProduct, getProductsForSeller } from "../services/product.api";
-import { setSellerProducts } from "../state/product.slice";
+import { createProduct, getAllProducts, getProductDetails, getProductsForSeller } from "../services/product.api";
+import { setProducts, setSellerProducts } from "../state/product.slice";
 
 export const useProduct = () => {
     const dispatch = useDispatch();
@@ -17,8 +17,21 @@ export const useProduct = () => {
         return data.products ?? [];
     }, [dispatch]);
 
+    const handleGetAllProducts = useCallback(async () => {
+        const data = await getAllProducts();
+        dispatch(setProducts(data.products ?? []));
+        return data.products ?? [];
+    }, [dispatch]);
+
+    const handleGetProductDetails = useCallback(async (id) => {
+        const data = await getProductDetails(id);
+        return data.product;
+    }, []);
+
     return {
         handleCreateProduct,
         handleGetProductsForSeller,
+        handleGetAllProducts,
+        handleGetProductDetails,
     };
 };
