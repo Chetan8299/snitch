@@ -15,8 +15,8 @@ import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const authRouter = Router();
 
-authRouter.post("register", validateRegistration, register);
-authRouter.post("login", validateLogin, login);
+authRouter.post("/register", validateRegistration, register);
+authRouter.post("/login", validateLogin, login);
 
 authRouter.get(
   "/google",

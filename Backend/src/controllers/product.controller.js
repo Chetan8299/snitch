@@ -53,9 +53,9 @@ export async function getProducts(req, res) {
 }
 
 export async function getProductDetails(req, res) {
-    const { id } = req.params;
+    const { productId } = req.params;
 
-    const product = await productModel.findById(id);
+    const product = await productModel.findById(productId).populate("seller", "fullName email");
 
     if (!product) {
         return res.status(404).json({
@@ -70,4 +70,38 @@ export async function getProductDetails(req, res) {
         success: true,
         product
     })
+}
+
+export async function createProductVariant(req, res) {
+    const { productId } = req.params;
+    console.log(req.body);
+
+    const { stock, priceAmount, priceCurrency, attributes, imageCount } = JSON.parse(req.body.variant);
+
+    const images = imageCount > 0 ? await Promise.all(req.files.map(async file => {
+        return await uploadFile({
+            buffer: file.buffer,
+            fileName: file.originalname
+        })
+    })) : [];
+
+    const productVariant = await productModel.findByIdAndUpdate(productId, {
+        $push: {
+            variants: {
+                images,
+                stock,
+                price: {
+                    amount: priceAmount,
+                    currency: priceCurrency || "INR"
+                },
+                attributes,
+            }
+        }
+    })
+
+    res.status(201).json({
+        message: "Product variant created successfully",
+        success: true,
+        productVariant
+    });
 }

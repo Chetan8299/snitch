@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { useSelector } from "react-redux";
+import { Navigate } from "react-router";
 import { useAuth } from "../hook/useAuth";
 import ContinueWithGoogle from "../components/ContinueWithGoogle";
 import {
@@ -30,7 +31,7 @@ const Field = ({ id, label, children }) => (
 
 const Login = () => {
   const { handleLogin } = useAuth();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { user, loading, error } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,6 +43,10 @@ const Login = () => {
       password,
     });
   };
+
+  if (user) {
+    return <Navigate to={user.role === "seller" ? "/seller/dashboard" : "/"} replace />;
+  }
 
   return (
     <div

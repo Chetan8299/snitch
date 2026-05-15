@@ -35,3 +35,16 @@ export async function getProductDetails(id) {
     const response = await productApiInstance.get(`/${id}`);
     return response.data;
 }
+
+export async function createProductVariant(productId, formData) {
+    if (import.meta.env.DEV) {
+        const rows = [...formData.entries()].map(([key, value]) => ({
+            key,
+            value: value instanceof File ? `File: ${value.name} (${value.size} bytes)` : value,
+        }));
+        console.debug("[createProductVariant] FormData entries", rows);
+    }
+
+    const response = await productApiInstance.post(`/${productId}/variants`, formData);
+    return response.data;
+}

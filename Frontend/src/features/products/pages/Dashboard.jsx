@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { useProduct } from "../hooks/useProduct";
+import { formatPrice, firstImageUrl, loadSellerProductsError } from "../utils/product.utils";
 import {
   cardClass,
   cardStyle,
@@ -18,44 +19,12 @@ import {
   productCardStyle,
 } from "../../../app/uiTheme";
 
-function firstImageUrl(product) {
-  const first = product?.images?.[0];
-  if (!first) return null;
-  if (typeof first === "string") return first;
-  if (typeof first?.url === "string") return first.url;
-  if (typeof first?.filePath === "string") return first.filePath;
-  return null;
-}
-
-function formatPrice(amount, currency) {
-  const n = Number(amount);
-  if (!Number.isFinite(n) || !currency) return String(amount ?? "—");
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    }).format(n);
-  } catch {
-    return `${n} ${currency}`;
-  }
-}
-
-function loadErrorMessage(err) {
-  const data = err?.response?.data;
-  if (typeof data?.message === "string") return data.message;
-  if (err?.response?.status === 401) return "Sign in as a seller to view your products.";
-  if (err?.response?.status === 403) {
-    return "Seller account required. Register or log in with a seller profile.";
-  }
-  return "Could not load products. Try again.";
-}
-
 const Dashboard = () => {
   const { handleGetProductsForSeller } = useProduct();
   const sellerProducts = useSelector((state) => state.product.sellerProducts);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +34,7 @@ const Dashboard = () => {
       try {
         await handleGetProductsForSeller();
       } catch (err) {
-        if (!cancelled) setError(loadErrorMessage(err));
+        if (!cancelled) setError(loadSellerProductsError(err));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -160,7 +129,7 @@ const Dashboard = () => {
               const img = firstImageUrl(product);
               const id = product._id ?? product.id;
               return (
-                <li key={id ?? product.title}>
+                <li onClick={() => navigate(`/seller/product/${id}`) } key={id ?? product.title}>
                   <article
                     className="h-full flex flex-col rounded-none overflow-hidden border border-zinc-300 transition hover:border-amber-600/50"
                     style={productCardStyle}
