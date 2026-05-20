@@ -9,7 +9,11 @@ import {
 export function findVariantInProduct(product, variantId) {
   if (!product || variantId == null) return null;
   const want = String(variantId);
-  const list = Array.isArray(product.variants) ? product.variants : [];
+  const list = Array.isArray(product.variants)
+    ? product.variants
+    : product?.variants
+      ? [product.variants]
+      : [];
   return (
     list.find(
       (v) => String(v._id) === want || String(v.id) === want,
@@ -43,6 +47,8 @@ export function resolveCartLine(item) {
     variantLabel,
     quantity,
     unitAmount: Number.isFinite(amount) ? amount : 0,
+    itemAmount: Number.isFinite(item?.price?.amount) ? Number(item?.price?.amount) : 0,
+    diffAmount: Number.isFinite(amount) ? amount - item?.price?.amount : 0,
     currency,
     lineTotal: Number.isFinite(amount) ? amount * quantity : 0,
     stock: variant?.stock ?? null,

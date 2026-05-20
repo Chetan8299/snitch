@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
 import { addToCartValidator } from "../validators/cart.validator.js";
-import { addToCart, getCart } from "../controllers/cart.controller.js";
+import { addToCart, getCart, incrementCartItemQuantity } from "../controllers/cart.controller.js";
 
 const cartRouter = Router();
 
@@ -21,5 +21,13 @@ cartRouter.post("/add/:productId/:variantId", authenticateUser, ...addToCartVali
  * @access Private (User)
  */
 cartRouter.get("/", authenticateUser, getCart)
+
+/**
+ * @route PATCH /api/cart/quantity/increment/:productId/:variantId
+ * @description Increment item quantity in the cart by one
+ * @access Private (User)
+ * @arguments productId: string, variantId: string
+ */
+cartRouter.patch("/quantity/increment/:productId/:variantId", authenticateUser, incrementCartItemQuantity)
 
 export default cartRouter;

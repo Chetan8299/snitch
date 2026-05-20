@@ -51,6 +51,17 @@ function CartLineDetails({ line, outOfStock }) {
             Not enough stock for this quantity.
           </p>
         ) : null}
+        {line.diffAmount > 0 ? (
+          <p className="text-xs mt-2 font-medium text-red-700">
+            You are getting paying {line.diffAmount} more than the original
+            price
+          </p>
+        ) : (
+          <p className="text-xs mt-2 font-medium text-green-700">
+            You are getting a discount of {Math.abs(line.diffAmount)} less than
+            the original price. Purchase this item at {line.formattedLine}
+          </p>
+        )}
       </div>
 
       <div className="flex items-end justify-between gap-4 pt-1 border-t border-zinc-200 sm:border-0 sm:pt-0">
@@ -93,6 +104,8 @@ function CartLineItem({ item }) {
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.cart.items);
+  const cartTotalPrice = useSelector((state) => state.cart.totalPrice);
+  const cartCurrency = useSelector((state) => state.cart.currency);
   const { handleGetCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -129,6 +142,9 @@ const Cart = () => {
     () => cartSubtotal(cartItems),
     [cartItems],
   );
+
+  const displayTotal = Number(cartTotalPrice) || total;
+  const displayCurrency = cartCurrency || currency;
 
   const isEmpty = !loading && !error && lines.length === 0;
 
@@ -176,12 +192,16 @@ const Cart = () => {
             {error}
           </div>
         ) : isEmpty ? (
-          <div className={`${cardClass} p-10 sm:p-14 text-center`} style={cardStyle}>
+          <div
+            className={`${cardClass} p-10 sm:p-14 text-center`}
+            style={cardStyle}
+          >
             <p className="text-lg font-semibold text-zinc-900 mb-2">
               Nothing here yet
             </p>
             <p className="text-sm mb-8 max-w-sm mx-auto" style={mutedTextStyle}>
-              When you add products with a chosen variant, they will show up here.
+              When you add products with a chosen variant, they will show up
+              here.
             </p>
             <Link
               to="/"
@@ -217,7 +237,7 @@ const Cart = () => {
                 <div className="flex justify-between gap-4">
                   <dt style={mutedTextStyle}>Subtotal</dt>
                   <dd className="font-medium text-zinc-900 tabular-nums">
-                    {formatPrice(total, currency)}
+                    {formatPrice(displayTotal, displayCurrency)}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4">
@@ -225,14 +245,19 @@ const Cart = () => {
                   <dd className="text-zinc-900">{count}</dd>
                 </div>
                 <div className="flex justify-between gap-4 pt-3 border-t border-zinc-300">
-                  <dt className="font-semibold text-zinc-900">Estimated total</dt>
+                  <dt className="font-semibold text-zinc-900">
+                    Estimated total
+                  </dt>
                   <dd className="text-xl font-semibold text-amber-700 tabular-nums">
-                    {formatPrice(total, currency)}
+                    {formatPrice(displayTotal, displayCurrency)}
                   </dd>
                 </div>
               </dl>
 
-              <p className="text-xs mb-5 leading-relaxed" style={mutedTextStyle}>
+              <p
+                className="text-xs mb-5 leading-relaxed"
+                style={mutedTextStyle}
+              >
                 Prices use each variant&apos;s current price. Shipping and taxes
                 calculated at checkout.
               </p>
